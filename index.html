@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUỔI MỚI eats | Authentic Vietnamese in New Delhi</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Quicksand for headers (signage vibe), Inter for body readability -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind Config for Custom Colors extracted from photos -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'tm-green': '#0b7a3f',    /* Primary Green (Storefront/Awning) */
+                        'tm-cream': '#fdf5e6',    /* Soft pale peach/cream background */
+                        'tm-warm': '#f5deb3',     /* Warm Wall color */
+                        'tm-red': '#9b2c2c',      /* Logo/Accent Red */
+                        'tm-wood': '#8b5a2b',     /* Warm brown for slatted wood textures */
+                        'tm-dark': '#2D2A26'      /* Readable dark grey for body text */
+                    },
+                    fontFamily: {
+                        'header': ['"Quicksand"', 'sans-serif'],
+                        'body': ['"Inter"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'menu-card': '0 4px 20px -2px rgba(139, 90, 43, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .animate-float {
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .animate-float-delayed {
+            animation: float 6s ease-in-out infinite;
+            animation-delay: 1.5s;
+        }
+
+        /* Cat Logo Hover Tilt */
+        .cat-logo {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .cat-logo:hover {
+            transform: rotate(8deg) scale(1.05);
+        }
+
+        /* Smooth scroll reveal */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Menu dot leaders for prices */
+        .menu-leader {
+            border-bottom: 2px dotted #8b5a2b;
+            opacity: 0.3;
+            flex-grow: 1;
+            margin: 0 10px;
+            position: relative;
+            top: -6px;
+        }
+    </style>
+</head>
+<body class="bg-tm-cream text-tm-dark font-body antialiased overflow-x-hidden selection:bg-tm-green selection:text-white flex flex-col min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-tm-cream/95 backdrop-blur-sm border-b-2 border-tm-wood/20 shadow-sm" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="#" class="flex items-center gap-3 group">
+                        <!-- REPLACE WITH image_d32375.png (Cat Logo) -->
+                        <img src="catLogo.png" alt="Tuoi Moi Cat Logo" class="h-12 w-12 object-contain cat-logo rounded-full border-2 border-tm-red/20">
+                        <div class="flex flex-col">
+                            <span class="font-header font-bold text-2xl tracking-wide text-tm-green uppercase leading-none transition-colors duration-300 group-hover:text-tm-red">Tuổi Mới</span>
+                            <span class="font-header font-semibold text-tm-red text-sm leading-none mt-1">eats</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#about" class="text-tm-dark hover:text-tm-red font-header font-semibold text-lg transition-colors duration-200">The Vibe</a>
+                    <a href="#menu" class="text-tm-dark hover:text-tm-red font-header font-semibold text-lg transition-colors duration-200">Menu</a>
+                    <a href="#reviews" class="text-tm-dark hover:text-tm-red font-header font-semibold text-lg transition-colors duration-200">Reviews</a>
+                    <a href="https://share.google/Eg1DqA3CetPQ5X99B" target="_blank" class="bg-tm-green hover:bg-[#096032] text-white font-header font-bold px-6 py-2.5 rounded-full transition-all duration-300 shadow-md hover:shadow-lg">
+                        Visit Us
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="text-tm-dark hover:text-tm-red focus:outline-none p-2 transition-colors">
+                        <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/>
+                            <path id="close-icon" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-tm-warm border-b-2 border-tm-wood/20 absolute w-full shadow-lg origin-top">
+            <div class="px-4 pt-4 pb-8 space-y-3 flex flex-col items-center text-center">
+                <a href="#about" class="mobile-link block w-full px-3 py-3 text-tm-dark font-header font-bold text-xl hover:text-tm-red transition-colors">The Vibe</a>
+                <a href="#menu" class="mobile-link block w-full px-3 py-3 text-tm-dark font-header font-bold text-xl hover:text-tm-red transition-colors">Menu</a>
+                <a href="#reviews" class="mobile-link block w-full px-3 py-3 text-tm-dark font-header font-bold text-xl hover:text-tm-red transition-colors">Reviews</a>
+                <a href="https://share.google/Eg1DqA3CetPQ5X99B" target="_blank" class="mobile-link block w-[80%] mt-4 bg-tm-green text-white px-3 py-4 rounded-full font-header font-bold text-xl shadow-md">Visit Us</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden flex-grow flex items-center bg-tm-cream">
+        
+        <!-- Background Decorative Elements -->
+        <div class="absolute top-24 left-10 opacity-30 animate-float hidden lg:block">
+            <!-- Decorative Vietnamese Lantern -->
+            <svg width="60" height="90" viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M40 0L42 20C55 22 70 35 70 60C70 85 55 98 42 100L40 120L38 100C25 98 10 85 10 60C10 35 25 22 38 20L40 0Z" fill="#9b2c2c"/>
+                <path d="M40 20V100" stroke="#fdf5e6" stroke-width="2"/>
+            </svg>
+        </div>
+        <div class="absolute bottom-20 right-10 opacity-30 animate-float-delayed hidden lg:block">
+            <svg width="50" height="75" viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M40 0L42 20C55 22 70 35 70 60C70 85 55 98 42 100L40 120L38 100C25 98 10 85 10 60C10 35 25 22 38 20L40 0Z" fill="#0b7a3f"/>
+            </svg>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full flex flex-col lg:flex-row items-center gap-12">
+            
+            <!-- Hero Text -->
+            <div class="lg:w-1/2 flex flex-col items-center text-center lg:text-left lg:items-start fade-up">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-tm-warm border border-tm-wood/30 text-tm-red font-header font-bold text-sm mb-6 shadow-sm">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+                    Humayunpur, Safdarjung
+                </div>
+                
+                <h1 class="font-header text-5xl lg:text-6xl xl:text-7xl font-bold text-tm-dark leading-tight mb-6">
+                    A Little Slice of <br/>
+                    <span class="text-tm-green">Hanoi</span> in Delhi.
+                </h1>
+                
+                <p class="text-lg lg:text-xl text-tm-dark/80 mb-8 max-w-lg font-body leading-relaxed">
+                    Authentic flavours, warm jazz, and cozy street-side vibes. Discover the city's favourite spot for soul-warming Phở and fresh Summer Rolls.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                    <a href="#menu" class="bg-tm-red hover:bg-[#7a2222] text-white font-header font-bold px-8 py-4 rounded-full transition-all duration-300 shadow-md hover:shadow-xl text-center text-lg flex items-center justify-center gap-2">
+                        View Menu
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Hero Image -->
+            <div class="lg:w-1/2 w-full mt-8 lg:mt-0 fade-up" style="transition-delay: 0.2s;">
+                <div class="relative w-full max-w-md mx-auto aspect-[4/5] rounded-t-full rounded-b-3xl overflow-hidden shadow-2xl border-8 border-tm-warm bg-tm-wood/10">
+                    <!-- REPLACE WITH image_d322c2.png (Storefront) or image_d31ff8.png (Interior) -->
+                    <img src="frontSide.webp" alt="Tuoi Moi Eats Exterior" class="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700">
+                    
+                    <!-- Floating Badge -->
+                    <div class="absolute bottom-6 right-[-10px] bg-white px-5 py-3 rounded-xl shadow-xl border border-tm-cream flex items-center gap-3 transform -rotate-3">
+                        <span class="text-3xl">🐈</span>
+                        <div class="flex flex-col">
+                            <span class="font-header font-bold text-tm-red text-sm">Pet Friendly!</span>
+                            <span class="text-xs text-tm-dark/60 font-body">Come say hi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Vibe Section -->
+    <section id="about" class="py-20 bg-tm-warm border-y border-tm-wood/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-12">
+            <div class="md:w-1/2 w-full fade-up">
+                <!-- REPLACE WITH image_d322f8.png (Counter) or image_d31fd1.png (Tables) -->
+                <img src="Vide.webp" alt="Inside Tuoi Moi" class="w-full h-auto rounded-2xl shadow-menu-card border-4 border-tm-cream">
+            </div>
+            <div class="md:w-1/2 w-full fade-up" style="transition-delay: 0.2s;">
+                <h2 class="font-header text-4xl font-bold text-tm-red mb-6">The Tuổi Mới Vibe</h2>
+                <p class="font-body text-lg text-tm-dark/90 mb-6 leading-relaxed">
+                    Step off the busy streets of Safdarjung and into our living room. Whether you’re stopping by for a slow-drip Vietnamese Coffee, catching up over a steaming bowl of Phở, or hoping to get a greeting from our resident feline mascot, Tuổi Mới is designed to feel like home.
+                </p>
+                <p class="font-body text-lg text-tm-dark/90 leading-relaxed">
+                    With soft jazz playing in the background, warm slatted wood textures, and authentic recipes crafted with clean, fresh ingredients, we aim to bring the true heart of Vietnam’s intimate street cafes right to New Delhi.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Digital Menu Section -->
+    <section id="menu" class="py-24 bg-tm-cream">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-up">
+                <h2 class="font-header text-5xl font-bold text-tm-green mb-4">Our Menu</h2>
+                <p class="font-body text-lg text-tm-dark/70">Fresh, light, and perfectly balanced. Authentic Vietnamese flavours.</p>
+            </div>
+
+            <!-- Menu Grid Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
+                
+                <!-- Column 1 -->
+                <div class="space-y-12">
+                    
+                    <!-- Category: Small Bites -->
+                    <div class="bg-white rounded-2xl p-8 shadow-menu-card border border-tm-wood/10 fade-up">
+                        <h3 class="font-header text-3xl font-bold text-tm-red mb-6 border-b-2 border-tm-wood/20 pb-2">Small Bites</h3>
+                        
+                        <div class="space-y-6">
+                            <!-- Item -->
+                            <div>
+                                <div class="flex items-baseline justify-between mb-1">
+                                    <span class="font-header font-bold text-lg text-tm-dark">Gỏi Cuốn (Summer Rolls) <span class="text-tm-green ml-1">▣</span></span>
+                                    <div class="menu-leader"></div>
+                                    <span class="font-header font-bold text-tm-green">280+</span>
+                                </div>
+                                <p class="font-body text-sm text-tm-dark/70 italic">Classic rice paper rolls filled with fresh herbs, greens. Choice of Tofu, Chicken, Pork, Shrimp.</p>
+                            </div>
+                            
+                            <!-- Item -->
+                            <div>
+                                <div class="flex items-baseline justify-between mb-1">
+                                    <span class="font-header font-bold text-lg text-tm-dark">Raw Mango Salad <span class="text-tm-green ml-1">▣</span></span>
+                                    <div class="menu-leader"></div>
+                                    <span class="font-header font-bold text-tm-green">350</span>
+                                </div>
+                                <p class="font-body text-sm text-tm-dark/70 italic">Crunchy vegetables and raw mango with a bright, tangy finish.</p>
+                            </div>
+
+                            <!-- Item -->
+                            <div>
+                                <div class="flex items-baseline justify-between mb-1">
+                                    <span class="font-header font-bold text-lg text-tm-dark">Taro Dumpling <span class="text-tm-yellow-600 ml-1 text-amber-500">▤</span></span>
+                                    <div class="menu-leader"></div>
+                                    <span class="font-header font-bold text-tm-green">320+</span>
+                                </div>
+                                <p class="font-body text-sm text-tm-dark/70 italic">Deep fried flaky crunchy shells. Mushroom & Cream Cheese or Prawns.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category: Drinks -->
+                    <div class="bg-white rounded-2xl p-8 shadow-menu-card border border-tm-wood/10 fade-up" style="transition-delay: 0.1s;">
+                        <h3 class="font-header text-3xl font-bold text-tm-red mb-6 border-b-2 border-tm-wood/20 pb-2">Drinks</h3>
+                        
+                        <div class="space-y-6">
+                            <!-- Item -->
+                            <div>
+                                <div class="flex items-baseline justify-between mb-1">
+                                    <span class="font-header font-bold text-lg text-tm-dark">Vietnamese Coffee <span class="text-tm-green ml-1">▣</span></span>
+                                    <div class="menu-leader"></div>
+                                    <span class="font-header font-bold text-tm-green">260</span>
+                                </div>
+                                <p class="font-body text-sm text-tm-dark/70 italic">Slow-brewed coffee with deep, robust notes, using a traditional Phin filter.</p>
+                            </div>
+                            
+                            <!-- Item -->
+                            <div>
+                                <div class="flex items-baseline justify-between mb-1">
+                                    <span class="font-header font-bold text-lg text-tm-dark">Mót Hội An <span class="text-tm-green ml-1">▣</span></span>
+                                    <div class="menu-leader"></div>
+                                    <span class="font-header font-bold text-tm-green">160</span>
+                                </div>
+                                <p class="font-body text-sm text-tm-dark/70 italic">A classic Hoi An herbal tea infused with citrus and spices, served cold.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 2 -->
+                <div class="space-y-12">
+                    
+                    <!-- Category: Meals -->
+                    <div class="bg-white rounded-2xl p-8 shadow-menu-card border border-tm-wood/10 fade-up" style="transition-delay: 0.2s;">
+                        <h3 class="font-header text-3xl font-bold text-tm-red mb-6 border-b-2 border-tm-wood/20 pb-2">Meals</h3>
+                        
+                        <div class="space-y-6">
+                            <!-- Item -->
+                            <div>
+                                <div class="flex items-baseline justify-between mb-1">
+                                    <span class="font-header font-bold text-lg text-tm-dark">Bún Chả</span>
+                                    <div class="menu-leader"></div>
+                                    <span class="font-header font-bold text-tm-green">500</span>
+                                </div>
+                                <p class="font-body text-sm text-tm-dark/70 italic">Hanoi's iconic noodle bowl featuring grilled pork, rice vermicelli, and a sweet-savory broth.</p>
+                            </div>
+                            
+                            <!-- Item -->
+                            <div>
+                                <div class="flex items-baseline justify-between mb-1">
+                                    <span class="font-header font-bold text-lg text-tm-dark">Phở (Noodle Soup) <span class="text-tm-green ml-1">▣</span></span>
+                                    <div class="menu-leader"></div>
+                                    <span class="font-header font-bold text-tm-green">380+</span>
+                                </div>
+                                <p class="font-body text-sm text-tm-dark/70 italic">Traditional Vietnamese rice noodle soup with aromatic broth. Choice of Tofu, Chicken, Pork, Sea Food.</p>
+                            </div>
+
+                            <!-- Item -->
+                            <div>
+                                <div class="flex items-baseline justify-between mb-1">
+                                    <span class="font-header font-bold text-lg text-tm-dark">Bánh Mì <span class="text-tm-green ml-1">▣</span></span>
+                                    <div class="menu-leader"></div>
+                                    <span class="font-header font-bold text-tm-green">380+</span>
+                                </div>
+                                <p class="font-body text-sm text-tm-dark/70 italic">Iconic street-style baguette sandwich with fresh veg, pickles & protein choice.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category: Desserts -->
+                    <div class="bg-white rounded-2xl p-8 shadow-menu-card border border-tm-wood/10 fade-up" style="transition-delay: 0.3s;">
+                        <h3 class="font-header text-3xl font-bold text-tm-red mb-6 border-b-2 border-tm-wood/20 pb-2">Desserts</h3>
+                        
+                        <div class="space-y-6">
+                            <!-- Item -->
+                            <div>
+                                <div class="flex items-baseline justify-between mb-1">
+                                    <span class="font-header font-bold text-lg text-tm-dark">Home Made Ice Cream <span class="text-tm-green ml-1">▣</span></span>
+                                    <div class="menu-leader"></div>
+                                    <span class="font-header font-bold text-tm-green">250</span>
+                                </div>
+                                <p class="font-body text-sm text-tm-dark/70 italic">Freshly churned in-house Coconut ice cream flavoured with Pandan Leaves.</p>
+                            </div>
+                            
+                            <!-- Item -->
+                            <div>
+                                <div class="flex items-baseline justify-between mb-1">
+                                    <span class="font-header font-bold text-lg text-tm-dark">Chuối chiên <span class="text-tm-green ml-1">▣</span></span>
+                                    <div class="menu-leader"></div>
+                                    <span class="font-header font-bold text-tm-green">250</span>
+                                </div>
+                                <p class="font-body text-sm text-tm-dark/70 italic">Fried banana - crispy outside, soft inside, served with Vanilla Ice Cream.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dietary Legend -->
+            <div class="mt-12 text-center bg-tm-warm inline-block mx-auto px-6 py-3 rounded-full border border-tm-wood/30 shadow-sm fade-up">
+                <div class="flex items-center justify-center gap-6 text-sm font-header font-bold text-tm-dark">
+                    <span class="flex items-center gap-2"><span class="text-tm-green text-lg">▣</span> Vegetarian</span>
+                    <span class="flex items-center gap-2"><span class="text-amber-500 text-lg">▤</span> Contains Egg</span>
+                </div>
+                <div class="text-xs font-body text-tm-dark/60 mt-2">
+                    *Taxes as applicable. We levy a voluntary 10% service charge. Let us know of any allergies.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="reviews" class="py-20 bg-tm-warm border-y border-tm-wood/20 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="font-header text-4xl font-bold text-tm-red mb-12 fade-up">Word on the Street</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Review 1 -->
+                <div class="bg-tm-cream p-8 rounded-2xl shadow-sm border border-tm-wood/10 text-left fade-up">
+                    <div class="text-amber-500 text-xl mb-4">★★★★★</div>
+                    <p class="font-body text-tm-dark/80 italic mb-6">"Incredible! Best vietnamese food in delhi by a significant margin - everything was fresh, balanced in flavor... close your eyes and order anything, it’ll be a banger."</p>
+                    <div class="font-header font-bold text-tm-green">- Shreya K.</div>
+                </div>
+                
+                <!-- Review 2 -->
+                <div class="bg-tm-cream p-8 rounded-2xl shadow-sm border border-tm-wood/10 text-left fade-up" style="transition-delay: 0.1s;">
+                    <div class="text-amber-500 text-xl mb-4">★★★★★</div>
+                    <p class="font-body text-tm-dark/80 italic mb-6">"A small Vietnam... food was too good and ambience is aesthetic, cosy and cute. Has become my favourite spot in the city."</p>
+                    <div class="font-header font-bold text-tm-green">- Tara R.</div>
+                </div>
+                
+                <!-- Review 3 -->
+                <div class="bg-tm-cream p-8 rounded-2xl shadow-sm border border-tm-wood/10 text-left fade-up" style="transition-delay: 0.2s;">
+                    <div class="text-amber-500 text-xl mb-4">★★★★★</div>
+                    <p class="font-body text-tm-dark/80 italic mb-6">"Top-notch Vietnamese cuisine with truly authentic flavors. The food felt comforting and homely... Excellent service and lovely music."</p>
+                    <div class="font-header font-bold text-tm-green">- Aqmar S.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-tm-dark text-tm-cream py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <!-- REPLACE WITH image_d32375.png (Cat Logo) -->
+                <img src="https://placehold.co/100x100/ffffff/9b2c2c?text=Logo" alt="Tuoi Moi Logo" class="h-10 w-10 rounded-full grayscale opacity-80">
+                <span class="font-header font-bold text-xl uppercase tracking-widest">Tuổi Mới eats</span>
+            </div>
+            
+            <div class="text-center md:text-left font-body text-sm text-tm-cream/70 space-y-1">
+                <p>Humayunpur, Safdarjung Enclave, New Delhi</p>
+                <p>Open 12:30 PM – 11:00 PM (Mondays Closed)</p>
+            </div>
+            
+            <div class="flex gap-4">
+                <a href="https://share.google/Eg1DqA3CetPQ5X99B" target="_blank" class="hover:text-tm-red transition-colors font-header font-bold">Google Maps</a>
+                <span class="text-tm-wood">|</span>
+                <a href="#" class="hover:text-tm-red transition-colors font-header font-bold">Instagram</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Javascript for Interactivity -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile Menu Toggle Logic
+            const btn = document.getElementById('mobile-menu-button');
+            const menu = document.getElementById('mobile-menu');
+            const iconMenu = document.getElementById('menu-icon');
+            const iconClose = document.getElementById('close-icon');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+
+            // Toggle menu on button click
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+                iconMenu.classList.toggle('hidden');
+                iconClose.classList.toggle('hidden');
+            });
+
+            // Close menu when a link is clicked
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    menu.classList.add('hidden');
+                    iconMenu.classList.remove('hidden');
+                    iconClose.classList.add('hidden');
+                });
+            });
+
+            // Intersection Observer for scroll animations (fade-up)
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target); // Run once
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-up').forEach(element => {
+                observer.observe(element);
+            });
+        });
+    </script>
+</body>
+</html>
